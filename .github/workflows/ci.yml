@@ -14,22 +14,22 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      # Mesmo ambiente do desenvolvimento local: PostgreSQL e storage (MinIO) via Docker.
+      # Mesmo ambiente do desenvolvimento local: PostgreSQL e storage S3 via Docker.
       - run: cp .env.example .env
       - run: docker compose up -d
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      - name: Aguardar banco e storage
+      - name: Aguardar banco
         run: |
           for i in $(seq 1 30); do
-            docker compose exec -T db pg_isready -U noel -d oficina_do_noel \
-              && curl -sf http://localhost:59000/minio/health/live && exit 0
+            docker compose exec -T db pg_isready -U noel -d oficina_do_noel && exit 0
             sleep 2
           done
           docker compose logs
           exit 1
+      - run: npm run storage:init
       - run: npx prisma migrate deploy
       - run: npx prisma db seed
       - run: npx playwright install --with-deps chrome

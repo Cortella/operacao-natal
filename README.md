@@ -17,7 +17,7 @@ Requisitos: Node.js 24 e Docker.
 ```bash
 npm install
 cp .env.example .env
-npm run db:up        # sobe o PostgreSQL (porta 54329) e o storage MinIO (porta 59000)
+npm run db:up        # sobe o PostgreSQL (porta 54329) e o storage S3 local (porta 59000), e cria o bucket
 npm run db:migrate   # cria as tabelas
 npm run db:seed      # modelos, músicas, configurações e administrador (ADMIN_EMAIL/ADMIN_PASSWORD)
 npm run dev          # http://localhost:3000

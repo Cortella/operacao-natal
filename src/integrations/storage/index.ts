@@ -13,7 +13,7 @@ import { env } from "@/lib/env";
 
 /**
  * Storage de arquivos em qualquer serviço compatível com S3 (AWS S3, Cloudflare R2,
- * Supabase Storage, MinIO). As credenciais ficam só no servidor.
+ * Supabase Storage e similares). As credenciais ficam só no servidor.
  */
 
 export class StorageNotConfiguredError extends Error {

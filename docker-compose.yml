@@ -1,4 +1,4 @@
-# Serviços de desenvolvimento: PostgreSQL e um storage compatível com S3 (MinIO).
+# Serviços de desenvolvimento: PostgreSQL e um storage compatível com S3 (RustFS).
 services:
   db:
     image: postgres:17-alpine
@@ -17,37 +17,19 @@ services:
       timeout: 3s
       retries: 10
 
+  # Storage compatível com S3 para desenvolvimento. O bucket é criado por
+  # `npm run storage:init` (executado junto com `npm run db:up`).
   storage:
-    image: minio/minio:latest
+    image: rustfs/rustfs:latest
     restart: unless-stopped
-    command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: noel
-      MINIO_ROOT_PASSWORD: noel-storage
+      RUSTFS_ACCESS_KEY: noel
+      RUSTFS_SECRET_KEY: noel-storage
     ports:
-      - "59000:9000" # API S3
-      - "59001:9001" # painel web
+      - "59000:9000"
     volumes:
-      - storage_data:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
-  # Cria o bucket e libera leitura pública dos arquivos (o acesso é pelo endereço, que é aleatório).
-  storage-init:
-    image: minio/mc:latest
-    depends_on:
-      storage:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set local http://storage:9000 noel noel-storage &&
-      mc mb --ignore-existing local/oficina-do-noel &&
-      mc anonymous set download local/oficina-do-noel
-      "
+      - storage_files:/data
 
 volumes:
   db_data:
-  storage_data:
+  storage_files:

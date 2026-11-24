@@ -11,12 +11,13 @@
     "test": "node scripts/run.mjs vitest/vitest.mjs run",
     "format": "prettier --write .",
     "postinstall": "prisma generate",
-    "db:up": "docker compose up -d",
+    "db:up": "docker compose up -d && node scripts/storage-init.mjs",
     "db:migrate": "prisma migrate dev && prisma generate",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:deploy": "prisma migrate deploy",
-    "test:e2e": "node scripts/run.mjs @playwright/test/cli.js test"
+    "test:e2e": "node scripts/run.mjs @playwright/test/cli.js test",
+    "storage:init": "node scripts/storage-init.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1177.0",
