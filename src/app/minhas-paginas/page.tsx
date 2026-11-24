@@ -12,6 +12,7 @@ import {
   SecondaryButton,
 } from "@/components/ui";
 import { requireUser } from "@/lib/auth";
+import { deletePageAction } from "@/modules/account/actions";
 import { createPageAction, setPublicationAction } from "@/modules/pages/actions";
 import { listUserPages, type PageSummary } from "@/modules/pages/queries";
 
@@ -108,6 +109,24 @@ async function PageList() {
                   </form>
                 )}
               </div>
+              <details className="mt-3 text-sm">
+                <summary className="cursor-pointer underline">Excluir esta página</summary>
+                <form action={deletePageAction} className="mt-2 space-y-2">
+                  <input type="hidden" name="pageId" value={page.id} />
+                  <p>
+                    Textos e fotos são apagados de forma definitiva
+                    {page.slug ? " e o link deixa de funcionar" : ""}.
+                  </p>
+                  <Button
+                    type="submit"
+                    variant="outline"
+                    size="sm"
+                    aria-label={`Confirmar exclusão de ${page.title || "página sem título"}`}
+                  >
+                    Confirmar exclusão
+                  </Button>
+                </form>
+              </details>
             </ChristmasCard>
           );
         })}

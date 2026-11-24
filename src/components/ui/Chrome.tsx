@@ -51,6 +51,7 @@ export function ChristmasHeader({
 const FOOTER_LINKS: NavLink[] = [
   { href: "/privacidade", label: "Política de privacidade" },
   { href: "/termos", label: "Termos de uso" },
+  { href: "/conta", label: "Minha conta" },
 ];
 
 /** Rodapé global. */

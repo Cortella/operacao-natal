@@ -27,6 +27,9 @@ export async function UserMenu() {
       <Button href="/minhas-paginas" variant="outline" size="sm" className="hidden sm:inline-flex">
         Minhas páginas
       </Button>
+      <Button href="/conta" variant="outline" size="sm" className="hidden sm:inline-flex">
+        Conta
+      </Button>
       <form action={logoutAction}>
         <Button type="submit" variant="outline" size="sm" aria-label="Sair da conta">
           Sair
