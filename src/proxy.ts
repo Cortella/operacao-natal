@@ -13,7 +13,9 @@ export function proxy(request: NextRequest) {
   );
 
   if (isProtected && !request.cookies.has(SESSION_COOKIE)) {
-    const login = new URL("/entrar", request.url);
+    // Quem chega pelo botão "Criar minha página" quase sempre ainda não tem conta.
+    const entry = pathname.startsWith("/criar") ? "/cadastro" : "/entrar";
+    const login = new URL(entry, request.url);
     login.searchParams.set("next", `${pathname}${search}`);
     return NextResponse.redirect(login);
   }

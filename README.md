@@ -4,7 +4,7 @@ Plataforma para criar e vender páginas de Natal personalizadas: o comprador mon
 
 O plano de desenvolvimento está em [docs/ROADMAP.md](docs/ROADMAP.md), dividido em 13 steps. Cada step tem uma issue neste repositório.
 
-**Status:** Steps 0 a 3 concluídos (fundação, Design System, banco de dados e autenticação). A vitrine dos componentes fica em `/design-system`.
+**Status:** Steps 0 a 4 concluídos (fundação, Design System, banco de dados, autenticação e landing page). A vitrine dos componentes fica em `/design-system`.
 
 ## Stack
 
