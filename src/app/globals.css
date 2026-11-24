@@ -1,7 +1,12 @@
 @import "tailwindcss";
 
-/* Tokens globais da identidade "Oficina do Noel". */
-:root {
+/*
+ * Design System "Oficina do Noel".
+ * Fonte única de cores, tipografia, raios, sombras e animações.
+ * O @theme publica cada token como variável CSS em :root e como utilitário Tailwind
+ * (ex.: --color-primary -> bg-primary, text-primary).
+ */
+@theme {
   --color-primary: #a01020;
   --color-primary-hover: #800c19;
 
@@ -18,34 +23,417 @@
   --color-white: #ffffff;
   --color-text-dark: #38251b;
   --color-text-light: #fff9ef;
+
+  /* Derivados usados em estados e detalhes. */
+  --color-gold-dark: #c98a1e;
+  --color-wood-deep: #3a2216;
+  --color-cream-dark: #dcdcc4;
+  --color-skin: #f6c9a0;
+  --color-danger: #b3261e;
+
+  --font-display: var(--font-fredoka), ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  --font-sans: var(--font-nunito-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-card: 1.5rem;
+  --radius-field: 0.875rem;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 10px 30px -12px rgb(30 15 8 / 0.45), 0 2px 6px rgb(30 15 8 / 0.15);
+  --shadow-soft: 0 4px 14px -6px rgb(30 15 8 / 0.35);
+
+  --animate-rise: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-pop: pop 0.45s cubic-bezier(0.2, 1.2, 0.3, 1) both;
+  --animate-bob: bob 3.2s ease-in-out infinite;
+  --animate-wave: wave 1.6s ease-in-out infinite;
+  --animate-twinkle: twinkle 2.4s ease-in-out infinite;
+  --animate-spin-slow: spin 6s linear infinite;
+  --animate-snow: snow linear infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+  @keyframes wave {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(-16deg);
+    }
+  }
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+  @keyframes snow {
+    from {
+      transform: translate3d(0, -10vh, 0);
+    }
+    to {
+      transform: translate3d(var(--snow-drift, 20px), 110vh, 0);
+    }
+  }
 }
 
-@theme inline {
-  --color-primary: var(--color-primary);
-  --color-primary-hover: var(--color-primary-hover);
-  --color-wood-dark: var(--color-wood-dark);
-  --color-wood-medium: var(--color-wood-medium);
-  --color-wood-light: var(--color-wood-light);
-  --color-elf-green: var(--color-elf-green);
-  --color-green-dark: var(--color-green-dark);
-  --color-cream: var(--color-cream);
-  --color-gold: var(--color-gold);
-  --color-text-dark: var(--color-text-dark);
-  --color-text-light: var(--color-text-light);
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-  --font-display: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
-  --font-sans: var(--font-nunito-sans), system-ui, sans-serif;
+  body {
+    background: var(--color-wood-dark);
+    color: var(--color-text-light);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 2px;
+  }
 }
 
-body {
-  background: var(--color-wood-dark);
-  color: var(--color-text-light);
-  font-family: var(--font-sans);
+@layer components {
+  /* ---------- Fundos ---------- */
+
+  /* Tábuas horizontais ilustradas: faixas com tons alternados e frestas escuras. */
+  .bg-wood {
+    --plank: 88px;
+    background-color: var(--color-wood-dark);
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent calc(var(--plank) - 3px),
+        rgb(20 10 5 / 0.55) calc(var(--plank) - 3px),
+        rgb(20 10 5 / 0.55) calc(var(--plank) - 1px),
+        rgb(255 220 170 / 0.07) calc(var(--plank) - 1px),
+        rgb(255 220 170 / 0.07) var(--plank)
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        rgb(255 200 140 / 0.05) 0,
+        rgb(255 200 140 / 0.05) var(--plank),
+        rgb(0 0 0 / 0.06) var(--plank),
+        rgb(0 0 0 / 0.06) calc(var(--plank) * 2),
+        rgb(255 200 140 / 0.02) calc(var(--plank) * 2),
+        rgb(255 200 140 / 0.02) calc(var(--plank) * 3)
+      ),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='88'%3E%3Cg fill='none' stroke='%23000' stroke-opacity='.10' stroke-width='1.5' stroke-linecap='round'%3E%3Cpath d='M0 20 Q150 10 300 22 T600 20'/%3E%3Cpath d='M0 48 Q200 58 380 46 T600 50'/%3E%3Cpath d='M40 68 Q180 62 300 70 T560 66'/%3E%3C/g%3E%3Cellipse cx='470' cy='34' rx='14' ry='6' fill='none' stroke='%23000' stroke-opacity='.12' stroke-width='1.5'/%3E%3C/svg%3E");
+    color: var(--color-text-light);
+  }
+
+  .bg-wood-light {
+    --plank: 88px;
+    background-color: var(--color-wood-light);
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent calc(var(--plank) - 3px),
+        rgb(60 30 10 / 0.4) calc(var(--plank) - 3px),
+        rgb(60 30 10 / 0.4) calc(var(--plank) - 1px),
+        rgb(255 230 190 / 0.12) calc(var(--plank) - 1px),
+        rgb(255 230 190 / 0.12) var(--plank)
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        rgb(255 220 170 / 0.06) 0,
+        rgb(255 220 170 / 0.06) var(--plank),
+        rgb(0 0 0 / 0.05) var(--plank),
+        rgb(0 0 0 / 0.05) calc(var(--plank) * 2)
+      );
+    color: var(--color-text-light);
+  }
+
+  .bg-noel-red {
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgb(255 255 255 / 0.1), transparent 60%),
+      var(--color-primary);
+    color: var(--color-text-light);
+  }
+
+  .bg-noel-green {
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgb(255 255 255 / 0.08), transparent 60%),
+      var(--color-green-dark);
+    color: var(--color-text-light);
+  }
+
+  .bg-noel-cream {
+    background: var(--color-cream);
+    color: var(--color-text-dark);
+  }
+
+  /* ---------- Botões ---------- */
+
+  .btn {
+    --btn-bg: var(--color-primary);
+    --btn-bg-hover: var(--color-primary-hover);
+    --btn-fg: var(--color-white);
+    --btn-edge: #5e0912;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.65rem 1.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    box-shadow:
+      0 4px 0 var(--btn-edge),
+      0 8px 16px -6px rgb(30 15 8 / 0.5);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color 0.15s ease,
+      transform 0.1s ease,
+      box-shadow 0.1s ease;
+  }
+
+  .btn:hover {
+    background: var(--btn-bg-hover);
+    transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: translateY(3px);
+    box-shadow:
+      0 1px 0 var(--btn-edge),
+      0 3px 8px -4px rgb(30 15 8 / 0.5);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+    background: var(--btn-bg);
+  }
+
+  .btn[data-loading="true"] {
+    cursor: progress;
+    opacity: 0.85;
+  }
+
+  .btn-secondary {
+    --btn-bg: var(--color-elf-green);
+    --btn-bg-hover: var(--color-green-dark);
+    --btn-edge: #0b2e22;
+  }
+
+  .btn-promo {
+    --btn-bg: var(--color-gold);
+    --btn-bg-hover: #f7c160;
+    --btn-fg: var(--color-text-dark);
+    --btn-edge: var(--color-gold-dark);
+  }
+
+  .btn-outline {
+    --btn-bg: var(--color-cream);
+    --btn-bg-hover: var(--color-white);
+    --btn-fg: var(--color-text-dark);
+    --btn-edge: var(--color-cream-dark);
+  }
+
+  .btn-sm {
+    min-height: 2.5rem;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.95rem;
+  }
+
+  .btn-lg {
+    min-height: 3.5rem;
+    padding: 0.85rem 2rem;
+    font-size: 1.2rem;
+  }
+
+  .btn-spinner {
+    width: 1.1em;
+    height: 1.1em;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    border-right-color: transparent;
+    animation: spin 0.7s linear infinite;
+  }
+
+  /* ---------- Cartões ---------- */
+
+  .card {
+    position: relative;
+    border-radius: var(--radius-card);
+    background: var(--color-cream);
+    color: var(--color-text-dark);
+    box-shadow: var(--shadow-card);
+    padding: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .card {
+      padding: 2rem;
+    }
+  }
+
+  .card-white {
+    background: var(--color-white);
+  }
+
+  /* Borda pontilhada dourada, como costura de embrulho. */
+  .card-stitched::before {
+    content: "";
+    position: absolute;
+    inset: 0.5rem;
+    border: 2px dashed rgb(201 138 30 / 0.55);
+    border-radius: calc(var(--radius-card) - 0.5rem);
+    pointer-events: none;
+  }
+
+  /* ---------- Formulários ---------- */
+
+  .field-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--color-text-dark);
+  }
+
+  .field-control {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-field);
+    border: 2px solid var(--color-cream-dark);
+    background: var(--color-white);
+    color: var(--color-text-dark);
+    font-size: 1rem;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .field-control::placeholder {
+    color: rgb(56 37 27 / 0.45);
+  }
+
+  .field-control:hover {
+    border-color: var(--color-wood-light);
+  }
+
+  .field-control:focus {
+    outline: none;
+    border-color: var(--color-elf-green);
+    box-shadow: 0 0 0 4px rgb(32 128 80 / 0.2);
+  }
+
+  .field-control[aria-invalid="true"] {
+    border-color: var(--color-danger);
+  }
+
+  .field-control[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 4px rgb(179 38 30 / 0.18);
+  }
+
+  .field-control:disabled {
+    background: var(--color-cream);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .field-hint {
+    margin-top: 0.3rem;
+    font-size: 0.875rem;
+    color: rgb(56 37 27 / 0.7);
+  }
+
+  .field-error {
+    margin-top: 0.3rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-danger);
+  }
+
+  /* ---------- Etiqueta de presente ---------- */
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-gold);
+    color: var(--color-text-dark);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
+/* Respeita a preferência de redução de movimento em toda a plataforma. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .snowflake {
+    display: none;
+  }
 }
