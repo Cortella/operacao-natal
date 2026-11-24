@@ -12,7 +12,7 @@ O trabalho está dividido em 13 steps. Cada step tem uma issue correspondente no
 | Estilo       | Tailwind CSS com tokens do Design System                                                                                      |
 | Backend      | Route Handlers e Server Actions                                                                                               |
 | Banco        | PostgreSQL + Prisma                                                                                                           |
-| Autenticação | Auth.js (e-mail/senha), papéis `USER` e `ADMIN`                                                                               |
+| Autenticação | Própria: e-mail e senha (scrypt), sessões no banco em cookie `httpOnly`, papéis `USER` e `ADMIN`                              |
 | Storage      | S3 compatível (AWS S3, Cloudflare R2 ou Supabase Storage) com URL pré-assinada                                                |
 | Pagamento    | Gateway com PIX e cartão atrás de uma interface `PaymentProvider`. Sugestão: Mercado Pago. A decisão final é tomada no Step 7 |
 | Validação    | Zod, com o mesmo schema no frontend e no backend                                                                              |

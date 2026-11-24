@@ -8,6 +8,20 @@ on:
 jobs:
   verificar:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: noel
+          POSTGRES_PASSWORD: noel
+          POSTGRES_DB: oficina_do_noel
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U noel -d oficina_do_noel"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     env:
       DATABASE_URL: postgresql://noel:noel@localhost:5432/oficina_do_noel?schema=public
     steps:
@@ -17,8 +31,17 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx prisma generate
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      - run: npm run build
+      - run: npx prisma migrate deploy
+      - run: npx prisma db seed
+      - run: npx playwright install --with-deps chrome
+      # O Playwright faz o build de produção e sobe o servidor antes dos testes.
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7

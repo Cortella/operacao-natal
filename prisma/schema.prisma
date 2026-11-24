@@ -321,3 +321,14 @@ model Setting {
   value     Json
   updatedAt DateTime @updatedAt
 }
+
+// ---------------------------- Segurança ---------------------------
+
+/// Contador de tentativas por chave (ex.: login por IP), compartilhado entre instâncias.
+model RateLimit {
+  key     String   @id
+  count   Int
+  resetAt DateTime
+
+  @@index([resetAt])
+}

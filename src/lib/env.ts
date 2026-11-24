@@ -17,7 +17,8 @@ export const envSchema = z.object({
     .transform((value) => value.replace(/\/+$/, ""))
     .default("http://localhost:3000"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL é obrigatória"),
-  AUTH_SECRET: optional,
+  RESEND_API_KEY: optional,
+  EMAIL_FROM: optional,
   S3_ENDPOINT: optional,
   S3_REGION: optional,
   S3_BUCKET: optional,

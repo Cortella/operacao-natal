@@ -4,11 +4,11 @@ Plataforma para criar e vender páginas de Natal personalizadas: o comprador mon
 
 O plano de desenvolvimento está em [docs/ROADMAP.md](docs/ROADMAP.md), dividido em 13 steps. Cada step tem uma issue neste repositório.
 
-**Status:** Steps 0 (fundação) e 1 (Design System) concluídos. A vitrine dos componentes fica em `/design-system`.
+**Status:** Steps 0 a 3 concluídos (fundação, Design System, banco de dados e autenticação). A vitrine dos componentes fica em `/design-system`.
 
 ## Stack
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma 7, Zod, Vitest.
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma 7, Zod, Vitest e Playwright.
 
 ## Rodando localmente
 
@@ -18,6 +18,8 @@ Requisitos: Node.js 24 e Docker.
 npm install
 cp .env.example .env
 npm run db:up        # sobe o PostgreSQL local na porta 54329
+npm run db:migrate   # cria as tabelas
+npm run db:seed      # modelos, músicas, configurações e administrador (ADMIN_EMAIL/ADMIN_PASSWORD)
 npm run dev          # http://localhost:3000
 ```
 
@@ -29,7 +31,8 @@ npm run dev          # http://localhost:3000
 | `npm run build`      | Build de produção                         |
 | `npm run lint`       | ESLint                                    |
 | `npm run typecheck`  | Gera os tipos de rota e roda o TypeScript |
-| `npm test`           | Testes (Vitest)                           |
+| `npm test`           | Testes de unidade (Vitest)                |
+| `npm run test:e2e`   | Testes de fluxo no navegador (Playwright) |
 | `npm run format`     | Prettier                                  |
 | `npm run db:up`      | Sobe o PostgreSQL local (Docker)          |
 | `npm run db:migrate` | Cria e aplica migrations                  |
