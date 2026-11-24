@@ -119,7 +119,7 @@ test("usuário comum recebe 403 no painel; administrador entra", async ({ page }
   await page.context().clearCookies();
   await login(page, adminEmail);
   await expect(page).toHaveURL(/\/admin/);
-  await expect(page.getByRole("heading", { name: "Painel da Oficina" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Resumo" })).toBeVisible();
 });
 
 test("recuperação de senha: o link funciona uma única vez", async ({ page }) => {

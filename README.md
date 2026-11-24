@@ -4,7 +4,7 @@ Plataforma para criar e vender páginas de Natal personalizadas: o comprador mon
 
 O plano de desenvolvimento está em [docs/ROADMAP.md](docs/ROADMAP.md), dividido em 13 steps. Cada step tem uma issue neste repositório.
 
-**Status:** Steps 0 a 6 e 8 concluídos. O Step 7 (pagamentos) está pronto, exceto a ligação com o gateway de produção, que ainda não foi escolhido: veja [docs/PAGAMENTOS.md](docs/PAGAMENTOS.md). Faltam o painel administrativo, a revisão de segurança/LGPD e a documentação de deploy.
+**Status:** Steps 0 a 6, 8 e 9 concluídos. O Step 7 (pagamentos) está pronto, exceto a ligação com o gateway de produção, que ainda não foi escolhido: veja [docs/PAGAMENTOS.md](docs/PAGAMENTOS.md). Faltam a revisão de segurança/LGPD e a documentação de deploy.
 
 ## Stack
 
