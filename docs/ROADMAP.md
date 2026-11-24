@@ -6,18 +6,18 @@ O trabalho está dividido em 13 steps. Cada step tem uma issue correspondente no
 
 ## Decisões de arquitetura
 
-| Camada | Escolha |
-| --- | --- |
-| Framework | Next.js (App Router) + React + TypeScript |
-| Estilo | Tailwind CSS com tokens do Design System |
-| Backend | Route Handlers e Server Actions |
-| Banco | PostgreSQL + Prisma |
-| Autenticação | Auth.js (e-mail/senha), papéis `USER` e `ADMIN` |
-| Storage | S3 compatível (AWS S3, Cloudflare R2 ou Supabase Storage) com URL pré-assinada |
-| Pagamento | Gateway com PIX e cartão atrás de uma interface `PaymentProvider`. Sugestão: Mercado Pago. A decisão final é tomada no Step 7 |
-| Validação | Zod, com o mesmo schema no frontend e no backend |
-| Testes | Vitest (unidade/integração) e Playwright (fluxos) |
-| Hospedagem | Vercel + Postgres gerenciado |
+| Camada       | Escolha                                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Framework    | Next.js (App Router) + React + TypeScript                                                                                     |
+| Estilo       | Tailwind CSS com tokens do Design System                                                                                      |
+| Backend      | Route Handlers e Server Actions                                                                                               |
+| Banco        | PostgreSQL + Prisma                                                                                                           |
+| Autenticação | Auth.js (e-mail/senha), papéis `USER` e `ADMIN`                                                                               |
+| Storage      | S3 compatível (AWS S3, Cloudflare R2 ou Supabase Storage) com URL pré-assinada                                                |
+| Pagamento    | Gateway com PIX e cartão atrás de uma interface `PaymentProvider`. Sugestão: Mercado Pago. A decisão final é tomada no Step 7 |
+| Validação    | Zod, com o mesmo schema no frontend e no backend                                                                              |
+| Testes       | Vitest (unidade/integração) e Playwright (fluxos)                                                                             |
+| Hospedagem   | Vercel + Postgres gerenciado                                                                                                  |
 
 ### Estrutura de pastas
 
@@ -51,6 +51,7 @@ prisma/                 schema, migrations, seed
 ## Step 0 — Fundação do projeto
 
 **Entregas**
+
 - Projeto Next.js + TypeScript + Tailwind, ESLint e Prettier.
 - Estrutura de pastas acima.
 - `docker-compose` com PostgreSQL local, Prisma conectado.
@@ -65,18 +66,18 @@ prisma/                 schema, migrations, seed
 
 ```css
 :root {
-  --color-primary: #A01020;
-  --color-primary-hover: #800C19;
+  --color-primary: #a01020;
+  --color-primary-hover: #800c19;
   --color-wood-dark: #503020;
   --color-wood-medium: #805020;
-  --color-wood-light: #A06040;
+  --color-wood-light: #a06040;
   --color-elf-green: #208050;
   --color-green-dark: #104030;
-  --color-cream: #F0F0E0;
-  --color-gold: #F0B040;
-  --color-white: #FFFFFF;
-  --color-text-dark: #38251B;
-  --color-text-light: #FFF9EF;
+  --color-cream: #f0f0e0;
+  --color-gold: #f0b040;
+  --color-white: #ffffff;
+  --color-text-dark: #38251b;
+  --color-text-light: #fff9ef;
 }
 ```
 
@@ -85,6 +86,7 @@ prisma/                 schema, migrations, seed
 - Espaçamentos, bordas e sombras centralizados.
 
 **Entregas**
+
 - Textura de madeira em tábuas horizontais (ilustrada, leve, em CSS/SVG) e fundos alternativos: vermelho, verde-escuro, creme e madeira clara.
 - Duendes em cartoon 2D (roupa verde, gorro vermelho, detalhes amarelos) em SVG, com variações de pose.
 - Componentes: `PrimaryButton`, `SecondaryButton`, botão promocional, `ChristmasCard`, `ElfCharacter`, `WoodBackground`, `ChristmasHeader`, `ChristmasFooter`, `FormInput`, `MusicPlayer`, `PhotoGallery`, `PromotionBanner`, `LoadingAnimation`, `SuccessMessage`, `ErrorMessage`.
@@ -99,6 +101,7 @@ prisma/                 schema, migrations, seed
 **Entidades:** `User` (com papel), `GiftPage`, `Photo`, `Music`, `Template`, `Message`, `Order`, `Payment`, `Coupon`, `Setting`.
 
 **Entregas**
+
 - Schema Prisma e migrations.
 - `GiftPage` com id único, slug público único, status (`DRAFT`, `PENDING_PAYMENT`, `PUBLISHED`, `DISABLED`, `EXPIRED`) e data de expiração.
 - Relações página → comprador → pedido → pagamentos.
@@ -110,6 +113,7 @@ prisma/                 schema, migrations, seed
 ## Step 3 — Autenticação e controle de acesso
 
 **Entregas**
+
 - Cadastro, login, logout e recuperação de senha.
 - Senhas com hash forte; sessão em cookie `httpOnly`.
 - Middleware protegendo `/criar`, `/checkout`, `/minhas-paginas` e `/admin`.
@@ -121,6 +125,7 @@ prisma/                 schema, migrations, seed
 ## Step 4 — Landing page
 
 **Entregas**
+
 - Banner principal, título, subtítulo e CTA "Criar minha página de Natal".
 - Demonstração visual de uma página personalizada.
 - Como funciona, exemplos, recursos, preço em destaque, FAQ e chamada final.
@@ -133,6 +138,7 @@ prisma/                 schema, migrations, seed
 ## Step 5 — Editor de páginas
 
 **Etapas**
+
 1. Informações básicas: quem cria, quem recebe, título, mensagem principal, introdução.
 2. Fotos: upload, pré-visualização, remover, substituir, reordenar.
 3. Música: escolher da biblioteca ou enviar a própria (com declaração de direitos autorais), área "Nossa música".
@@ -142,6 +148,7 @@ prisma/                 schema, migrations, seed
 7. Finalização (leva ao checkout).
 
 **Entregas**
+
 - Indicador de progresso e navegação entre etapas.
 - Rascunho salvo automaticamente no banco; "continuar depois" em `/minhas-paginas`.
 - Pré-visualização em tempo real.
@@ -153,6 +160,7 @@ prisma/                 schema, migrations, seed
 ## Step 6 — Página pública do presente
 
 **Entregas**
+
 - Rota `/presente/[slug]`, independente do painel.
 - Animação de abertura do presente, cenário natalino, duendes, cartão central com o nome de quem recebe, mensagem especial, galeria animada e player de música.
 - Música só toca após interação do usuário (política de autoplay dos navegadores).
@@ -165,6 +173,7 @@ prisma/                 schema, migrations, seed
 ## Step 7 — Pagamentos
 
 **Entregas**
+
 - Interface `PaymentProvider` e implementação do gateway escolhido.
 - Checkout com valor, cupom, PIX (QR code e copia-e-cola) e cartão de crédito.
 - Criação da cobrança no backend, com o valor calculado no servidor.
@@ -179,6 +188,7 @@ prisma/                 schema, migrations, seed
 ## Step 8 — Publicação e compartilhamento
 
 **Entregas**
+
 - Após pagamento confirmado: gerar o slug (ex.: `joao-e-maria`, com tratamento de colisão), publicar e exibir o link.
 - Página de sucesso com duende, botão de copiar link e botão de WhatsApp.
 - `/minhas-paginas`: listar, editar depois de publicada, despublicar.
@@ -189,6 +199,7 @@ prisma/                 schema, migrations, seed
 ## Step 9 — Painel administrativo
 
 **Entregas**
+
 - Dashboard: páginas criadas, vendas, faturamento, pagamentos pendentes e aprovados, páginas publicadas.
 - Páginas: listar, pesquisar por nome, ver comprador, destinatário e status, editar, desativar e excluir (respeitando retenção).
 - Comercial: preço, promoções, validade de ofertas, transações e cupons.
@@ -200,6 +211,7 @@ prisma/                 schema, migrations, seed
 ## Step 10 — Segurança, privacidade e LGPD
 
 **Entregas**
+
 - Revisão de validação (Zod) em todas as entradas.
 - Validação real do conteúdo dos arquivos enviados, limites de tamanho e rate limit nos endpoints sensíveis.
 - Cabeçalhos de segurança e CSP.
@@ -212,6 +224,7 @@ prisma/                 schema, migrations, seed
 ## Step 11 — Testes dos fluxos principais
 
 **Entregas**
+
 - Unidade: cálculo de preço e cupom, geração de slug, validação de webhook, regras de publicação e expiração.
 - Integração: webhook de pagamento e permissões.
 - E2E (Playwright, com viewport de celular): cadastro → editor → checkout em sandbox → página publicada → compartilhar; e fluxo do admin.
@@ -221,6 +234,7 @@ prisma/                 schema, migrations, seed
 ## Step 12 — Documentação e deploy
 
 **Entregas**
+
 - README com instalação, variáveis de ambiente, migrations e seed.
 - Guias: configurar o gateway e o webhook, configurar o storage, criar o primeiro administrador.
 - Deploy na Vercel com banco gerenciado e domínio.

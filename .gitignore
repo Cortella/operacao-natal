@@ -11,3 +11,7 @@ test-results/
 .vercel/
 *.log
 .DS_Store
+
+/src/generated/prisma
+*.tsbuildinfo
+next-env.d.ts

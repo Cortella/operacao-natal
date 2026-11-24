@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* Tokens globais da identidade "Oficina do Noel". */
+:root {
+  --color-primary: #a01020;
+  --color-primary-hover: #800c19;
+
+  --color-wood-dark: #503020;
+  --color-wood-medium: #805020;
+  --color-wood-light: #a06040;
+
+  --color-elf-green: #208050;
+  --color-green-dark: #104030;
+
+  --color-cream: #f0f0e0;
+  --color-gold: #f0b040;
+
+  --color-white: #ffffff;
+  --color-text-dark: #38251b;
+  --color-text-light: #fff9ef;
+}
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-wood-dark: var(--color-wood-dark);
+  --color-wood-medium: var(--color-wood-medium);
+  --color-wood-light: var(--color-wood-light);
+  --color-elf-green: var(--color-elf-green);
+  --color-green-dark: var(--color-green-dark);
+  --color-cream: var(--color-cream);
+  --color-gold: var(--color-gold);
+  --color-text-dark: var(--color-text-dark);
+  --color-text-light: var(--color-text-light);
+
+  --font-display: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
+  --font-sans: var(--font-nunito-sans), system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-wood-dark);
+  color: var(--color-text-light);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+}
