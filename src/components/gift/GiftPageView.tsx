@@ -24,6 +24,8 @@ type Props = {
    * para a pessoa ver onde cada coisa vai aparecer.
    */
   preview?: boolean;
+  /** Evento que inicia a música (ver MusicPlayer). */
+  musicStartEvent?: string;
   className?: string;
 };
 
@@ -35,7 +37,7 @@ function Placeholder({ children }: { children: string }) {
  * A página de presente. É o mesmo componente na prévia do editor e no link
  * público, então o que o comprador vê antes de pagar é o que será entregue.
  */
-export function GiftPageView({ page, preview = false, className }: Props) {
+export function GiftPageView({ page, preview = false, musicStartEvent, className }: Props) {
   const { template } = page;
   const accent = accentClass[template.accent];
   const onDark = template.background !== "cream";
@@ -112,6 +114,7 @@ export function GiftPageView({ page, preview = false, className }: Props) {
             src={page.music.url}
             title={page.music.title}
             artist={page.music.artist ?? undefined}
+            startEvent={musicStartEvent}
             className="w-full"
           />
         )}

@@ -13,6 +13,7 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.APP_URL || "http://localhost:3000"),
   title: {
     default: "Oficina do Noel — páginas de Natal personalizadas",
     template: "%s · Oficina do Noel",

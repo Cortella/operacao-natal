@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 
 type Props = {
@@ -10,6 +10,11 @@ type Props = {
   /** Título da área. O padrão é "Nossa música". */
   heading?: string;
   loop?: boolean;
+  /**
+   * Nome de um evento da janela que inicia a música. Só funciona se o evento for
+   * disparado dentro de um toque do usuário (ex.: o botão "Abrir presente").
+   */
+  startEvent?: string;
   className?: string;
 };
 
@@ -30,6 +35,7 @@ export function MusicPlayer({
   artist,
   heading = "Nossa música",
   loop = true,
+  startEvent,
   className,
 }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -37,6 +43,16 @@ export function MusicPlayer({
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!startEvent) return;
+    const start = () => {
+      // Se o navegador recusar, o botão de tocar continua disponível.
+      audioRef.current?.play().catch(() => undefined);
+    };
+    window.addEventListener(startEvent, start);
+    return () => window.removeEventListener(startEvent, start);
+  }, [startEvent]);
 
   async function toggle() {
     const audio = audioRef.current;
