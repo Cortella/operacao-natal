@@ -1,5 +1,6 @@
 "use server";
 
+import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentUser, requireUser, type SessionUser } from "@/lib/auth";
@@ -283,4 +284,25 @@ export async function createPageAction(): Promise<void> {
   if (!limit.allowed) redirect("/minhas-paginas");
   const id = await createDraftId(user.id, user.name);
   redirect(`/criar/${id}`);
+}
+
+/**
+ * Tira a página do ar ou a recoloca (formulários de "Minhas páginas").
+ * Só vale para páginas já pagas; uma página bloqueada pela administração não volta.
+ */
+export async function setPublicationAction(formData: FormData): Promise<void> {
+  const access = await ownedPage(formData.get("pageId"));
+  if ("error" in access) return;
+  const publish = formData.get("publish") === "1";
+
+  const paid = await db.order.count({ where: { pageId: access.pageId, status: "PAID" } });
+  if (paid === 0) return;
+
+  await db.giftPage.updateMany({
+    where: publish
+      ? { id: access.pageId, status: "DISABLED", blockedByAdmin: false, slug: { not: null } }
+      : { id: access.pageId, status: "PUBLISHED" },
+    data: { status: publish ? "PUBLISHED" : "DISABLED" },
+  });
+  refresh();
 }

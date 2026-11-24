@@ -1,28 +1,10 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { sql } from "./db";
-import { photoFile, registerAndOpenEditor } from "./helpers";
+import { buildPage } from "./helpers";
 
 test.beforeEach(async () => {
   await sql(`DELETE FROM "RateLimit"`);
 });
-
-/** Monta uma página pelo editor e devolve o id; a publicação é feita direto no banco. */
-async function buildPage(page: Page): Promise<string> {
-  await registerAndOpenEditor(page);
-  const pageId = page.url().split("/").pop()!;
-  await page.getByLabel("Nome de quem vai receber").fill("Maria");
-  await page.getByLabel("Título da página").fill("Nosso Natal");
-  await page.getByLabel("Mensagem principal").fill("Você é o meu melhor presente.");
-  await page.getByRole("button", { name: "Etapa 2: Fotos" }).click();
-  await page
-    .locator('input[type="file"][multiple]')
-    .setInputFiles([await photoFile("a.jpg", "#a01020"), await photoFile("b.jpg", "#208050")]);
-  await expect(page.getByRole("img", { name: "Foto 2" })).toBeVisible({ timeout: 20_000 });
-  await page.getByRole("button", { name: "Etapa 3: Música" }).click();
-  await page.getByRole("radio", { name: /Noite Feliz/ }).check();
-  await expect(page.getByText("Salvo ✓")).toBeVisible();
-  return pageId;
-}
 
 const publish = (pageId: string, slug: string, expiresAt: string | null = null) =>
   sql(

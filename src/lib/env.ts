@@ -26,6 +26,7 @@ export const envSchema = z.object({
   S3_SECRET_ACCESS_KEY: optional,
   S3_PUBLIC_URL: optional,
   S3_FORCE_PATH_STYLE: optional,
+  PAYMENT_PROVIDER: optional,
   PAYMENT_ACCESS_TOKEN: optional,
   PAYMENT_WEBHOOK_SECRET: optional,
 });

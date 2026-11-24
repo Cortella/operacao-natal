@@ -54,9 +54,17 @@ function toView(row: PageRow): GiftPageView {
 export async function getOwnedPage(
   pageId: string,
   ownerId: string,
-): Promise<(GiftPageView & { editorStep: number; expiresAt: Date | null }) | null> {
+): Promise<
+  (GiftPageView & { editorStep: number; expiresAt: Date | null; expired: boolean }) | null
+> {
   const row = await findRow({ id: pageId, ownerId });
-  return row ? { ...toView(row), editorStep: row.editorStep, expiresAt: row.expiresAt } : null;
+  if (!row) return null;
+  return {
+    ...toView(row),
+    editorStep: row.editorStep,
+    expiresAt: row.expiresAt,
+    expired: row.expiresAt !== null && row.expiresAt.getTime() <= Date.now(),
+  };
 }
 
 /** Página pública pelo slug: só publicada e dentro da validade. */
@@ -78,6 +86,7 @@ export type PageSummary = {
   recipientName: string;
   cover: string | null;
   expired: boolean;
+  blockedByAdmin: boolean;
   updatedAt: Date;
 };
 
@@ -92,6 +101,7 @@ export async function listUserPages(ownerId: string): Promise<PageSummary[]> {
       title: true,
       recipientName: true,
       expiresAt: true,
+      blockedByAdmin: true,
       updatedAt: true,
       photos: { orderBy: { sortOrder: "asc" }, take: 1, select: { url: true } },
     },

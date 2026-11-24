@@ -12,7 +12,7 @@ import {
   SecondaryButton,
 } from "@/components/ui";
 import { requireUser } from "@/lib/auth";
-import { createPageAction } from "@/modules/pages/actions";
+import { createPageAction, setPublicationAction } from "@/modules/pages/actions";
 import { listUserPages, type PageSummary } from "@/modules/pages/queries";
 
 export const metadata: Metadata = { title: "Minhas páginas" };
@@ -84,14 +84,28 @@ async function PageList() {
                   {page.status === "DRAFT" ? "Continuar" : "Editar"}
                 </Button>
                 {live && (
-                  <SecondaryButton href={`/presente/${page.slug}`} size="sm" target="_blank">
-                    Abrir
+                  <SecondaryButton href={`/checkout/${page.id}/sucesso`} size="sm">
+                    Compartilhar
                   </SecondaryButton>
                 )}
                 {page.status === "PENDING_PAYMENT" && (
                   <PrimaryButton href={`/checkout/${page.id}`} size="sm">
                     Pagar
                   </PrimaryButton>
+                )}
+                {(page.status === "PUBLISHED" ||
+                  (page.status === "DISABLED" && !page.blockedByAdmin)) && (
+                  <form action={setPublicationAction}>
+                    <input type="hidden" name="pageId" value={page.id} />
+                    <input
+                      type="hidden"
+                      name="publish"
+                      value={page.status === "PUBLISHED" ? "0" : "1"}
+                    />
+                    <Button type="submit" variant="outline" size="sm">
+                      {page.status === "PUBLISHED" ? "Tirar do ar" : "Colocar no ar"}
+                    </Button>
+                  </form>
                 )}
               </div>
             </ChristmasCard>

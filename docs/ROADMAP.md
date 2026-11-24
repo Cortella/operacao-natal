@@ -6,18 +6,18 @@ O trabalho está dividido em 13 steps. Cada step tem uma issue correspondente no
 
 ## Decisões de arquitetura
 
-| Camada       | Escolha                                                                                                                       |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| Framework    | Next.js (App Router) + React + TypeScript                                                                                     |
-| Estilo       | Tailwind CSS com tokens do Design System                                                                                      |
-| Backend      | Route Handlers e Server Actions                                                                                               |
-| Banco        | PostgreSQL + Prisma                                                                                                           |
-| Autenticação | Própria: e-mail e senha (scrypt), sessões no banco em cookie `httpOnly`, papéis `USER` e `ADMIN`                              |
-| Storage      | S3 compatível (AWS S3, Cloudflare R2 ou Supabase Storage) com URL pré-assinada                                                |
-| Pagamento    | Gateway com PIX e cartão atrás de uma interface `PaymentProvider`. Sugestão: Mercado Pago. A decisão final é tomada no Step 7 |
-| Validação    | Zod, com o mesmo schema no frontend e no backend                                                                              |
-| Testes       | Vitest (unidade/integração) e Playwright (fluxos)                                                                             |
-| Hospedagem   | Vercel + Postgres gerenciado                                                                                                  |
+| Camada       | Escolha                                                                                                                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Framework    | Next.js (App Router) + React + TypeScript                                                                                                        |
+| Estilo       | Tailwind CSS com tokens do Design System                                                                                                         |
+| Backend      | Route Handlers e Server Actions                                                                                                                  |
+| Banco        | PostgreSQL + Prisma                                                                                                                              |
+| Autenticação | Própria: e-mail e senha (scrypt), sessões no banco em cookie `httpOnly`, papéis `USER` e `ADMIN`                                                 |
+| Storage      | S3 compatível (AWS S3, Cloudflare R2 ou Supabase Storage) com URL pré-assinada                                                                   |
+| Pagamento    | Gateway com PIX e cartão atrás da interface `PaymentProvider`. O gateway de produção ainda não foi escolhido; ver [PAGAMENTOS.md](PAGAMENTOS.md) |
+| Validação    | Zod, com o mesmo schema no frontend e no backend                                                                                                 |
+| Testes       | Vitest (unidade/integração) e Playwright (fluxos)                                                                                                |
+| Hospedagem   | Vercel + Postgres gerenciado                                                                                                                     |
 
 ### Estrutura de pastas
 

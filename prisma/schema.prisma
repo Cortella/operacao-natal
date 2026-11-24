@@ -148,6 +148,9 @@ model GiftPage {
   musicId    String?
   music      Music?    @relation(fields: [musicId], references: [id], onDelete: SetNull)
 
+  /// Desativada pela administração: o dono não consegue recolocar no ar.
+  blockedByAdmin Boolean @default(false)
+
   /// Última etapa do editor visitada, para continuar depois.
   editorStep  Int       @default(1)
   publishedAt DateTime?
