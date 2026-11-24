@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: noel
       POSTGRES_DB: oficina_do_noel
     ports:
-      - "5433:5432"
+      - "54329:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:

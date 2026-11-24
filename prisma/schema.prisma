@@ -1,7 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// Modelo de dados da Oficina do Noel.
+// Valores monetários são sempre inteiros em centavos de real.
 
 generator client {
   provider = "prisma-client"
@@ -10,4 +8,316 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ----------------------------- Contas -----------------------------
+
+enum Role {
+  USER
+  ADMIN
+}
+
+/// Compradores e administradores. O papel define o acesso ao painel.
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  /// Momento em que a pessoa aceitou os termos e a política de privacidade (LGPD).
+  acceptedTermsAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions       Session[]
+  passwordResets PasswordResetToken[]
+  pages          GiftPage[]
+  orders         Order[]
+  musics         Music[]
+
+  @@index([role])
+}
+
+/// Sessão de login. Só o hash do token fica no banco.
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// ---------------------------- Conteúdo ----------------------------
+
+/// Modelo visual reutilizável de página (cores, layout das fotos, decoração).
+model Template {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  /// Configuração visual validada por `templateConfigSchema`.
+  config      Json
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pages GiftPage[]
+}
+
+enum MusicSource {
+  /// Biblioteca autorizada, cadastrada pelo administrador.
+  PLATFORM
+  /// Enviada pelo comprador, com declaração de direitos.
+  USER
+}
+
+model Music {
+  id         String      @id @default(cuid())
+  title      String
+  artist     String?
+  /// URL pública do áudio.
+  url        String
+  /// Chave no storage, quando o arquivo foi enviado para lá.
+  storageKey String?
+  source     MusicSource @default(PLATFORM)
+  /// Origem ou licença que autoriza o uso.
+  license    String?
+  /// Dono do arquivo, para músicas enviadas por compradores.
+  ownerId    String?
+  owner      User?       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  /// Quando o comprador declarou ter direito de usar a música.
+  rightsDeclaredAt DateTime?
+  active     Boolean     @default(true)
+  sortOrder  Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  pages GiftPage[]
+
+  @@index([source, active])
+  @@index([ownerId])
+}
+
+// ---------------------------- Páginas -----------------------------
+
+enum PageStatus {
+  /// Em edição; ainda não foi para o pagamento.
+  DRAFT
+  /// Aguardando confirmação do pagamento.
+  PENDING_PAYMENT
+  /// Paga e visível no link público.
+  PUBLISHED
+  /// Tirada do ar pelo dono ou pelo administrador.
+  DISABLED
+}
+
+/// Página de presente. A expiração é calculada por `expiresAt`, não por status.
+model GiftPage {
+  id      String     @id @default(cuid())
+  /// Endereço público (/presente/<slug>). Definido na publicação.
+  slug    String?    @unique
+  status  PageStatus @default(DRAFT)
+  ownerId String
+  owner   User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  senderName    String @default("")
+  recipientName String @default("")
+  title         String @default("")
+  introText     String @default("")
+  mainMessage   String @default("")
+
+  templateId String?
+  template   Template? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  musicId    String?
+  music      Music?    @relation(fields: [musicId], references: [id], onDelete: SetNull)
+
+  /// Última etapa do editor visitada, para continuar depois.
+  editorStep  Int       @default(1)
+  publishedAt DateTime?
+  /// Depois desta data o link público deixa de abrir. Nulo = não expira.
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  photos   Photo[]
+  messages Message[]
+  orders   Order[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([recipientName])
+}
+
+model Photo {
+  id         String   @id @default(cuid())
+  pageId     String
+  page       GiftPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  storageKey String
+  url        String
+  caption    String   @default("")
+  mimeType   String
+  sizeBytes  Int
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([pageId, sortOrder])
+}
+
+/// Mensagem especial exibida em cartão natalino na página.
+model Message {
+  id        String   @id @default(cuid())
+  pageId    String
+  page      GiftPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  content   String
+  signature String   @default("")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pageId, sortOrder])
+}
+
+// ---------------------------- Comercial ---------------------------
+
+enum CouponType {
+  PERCENT
+  FIXED
+}
+
+model Coupon {
+  id             String     @id @default(cuid())
+  /// Sempre em maiúsculas.
+  code           String     @unique
+  type           CouponType
+  /// Percentual (1–100) ou valor em centavos, conforme o tipo.
+  value          Int
+  maxRedemptions Int?
+  redemptions    Int        @default(0)
+  startsAt       DateTime?
+  endsAt         DateTime?
+  active         Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  orders Order[]
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELED
+  REFUNDED
+}
+
+/// Pedido de publicação de uma página. Os valores são calculados no servidor.
+model Order {
+  id      String      @id @default(cuid())
+  status  OrderStatus @default(PENDING)
+  userId  String
+  user    User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  /// A página pode ser excluída; o pedido permanece como registro fiscal.
+  pageId  String?
+  page    GiftPage?   @relation(fields: [pageId], references: [id], onDelete: SetNull)
+
+  priceCents    Int
+  discountCents Int     @default(0)
+  totalCents    Int
+  couponId      String?
+  coupon        Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
+
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  payments Payment[]
+
+  @@index([userId])
+  @@index([pageId])
+  @@index([status, createdAt])
+}
+
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELED
+  REFUNDED
+  EXPIRED
+}
+
+/// Cobrança criada no gateway para um pedido.
+model Payment {
+  id                String        @id @default(cuid())
+  orderId           String
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  provider          String
+  /// Identificador da cobrança no gateway.
+  providerPaymentId String
+  method            PaymentMethod
+  status            PaymentStatus @default(PENDING)
+  amountCents       Int
+  /// Código PIX copia-e-cola e imagem do QR code, quando o método é PIX.
+  pixCode           String?
+  pixQrCodeBase64   String?
+  pixExpiresAt      DateTime?
+  /// Motivo informado pelo gateway em recusas.
+  statusDetail      String?
+  approvedAt        DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  events PaymentEvent[]
+
+  @@unique([provider, providerPaymentId])
+  @@index([orderId])
+  @@index([status])
+}
+
+/// Histórico de notificações do gateway. `eventKey` garante idempotência.
+model PaymentEvent {
+  id          String    @id @default(cuid())
+  provider    String
+  eventKey    String
+  type        String
+  paymentId   String?
+  payment     Payment?  @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  /// Status do pagamento confirmado no gateway ao processar o evento.
+  status      PaymentStatus?
+  payload     Json
+  receivedAt  DateTime  @default(now())
+  processedAt DateTime?
+
+  @@unique([provider, eventKey])
+  @@index([paymentId])
+}
+
+// -------------------------- Configurações -------------------------
+
+/// Configurações editáveis pelo administrador (preço, promoção, textos da landing).
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
 }

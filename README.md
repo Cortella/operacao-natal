@@ -17,7 +17,7 @@ Requisitos: Node.js 24 e Docker.
 ```bash
 npm install
 cp .env.example .env
-npm run db:up        # sobe o PostgreSQL local na porta 5433
+npm run db:up        # sobe o PostgreSQL local na porta 54329
 npm run dev          # http://localhost:3000
 ```
 
