@@ -8,32 +8,28 @@ on:
 jobs:
   verificar:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: noel
-          POSTGRES_PASSWORD: noel
-          POSTGRES_DB: oficina_do_noel
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U noel -d oficina_do_noel"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 10
-    env:
-      DATABASE_URL: postgresql://noel:noel@localhost:5432/oficina_do_noel?schema=public
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
+      # Mesmo ambiente do desenvolvimento local: PostgreSQL e storage (MinIO) via Docker.
+      - run: cp .env.example .env
+      - run: docker compose up -d
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - name: Aguardar banco e storage
+        run: |
+          for i in $(seq 1 30); do
+            docker compose exec -T db pg_isready -U noel -d oficina_do_noel \
+              && curl -sf http://localhost:59000/minio/health/live && exit 0
+            sleep 2
+          done
+          docker compose logs
+          exit 1
       - run: npx prisma migrate deploy
       - run: npx prisma db seed
       - run: npx playwright install --with-deps chrome

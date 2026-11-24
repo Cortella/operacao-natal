@@ -1,3 +1,4 @@
+# Serviços de desenvolvimento: PostgreSQL e um storage compatível com S3 (MinIO).
 services:
   db:
     image: postgres:17-alpine
@@ -16,5 +17,37 @@ services:
       timeout: 3s
       retries: 10
 
+  storage:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: noel
+      MINIO_ROOT_PASSWORD: noel-storage
+    ports:
+      - "59000:9000" # API S3
+      - "59001:9001" # painel web
+    volumes:
+      - storage_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Cria o bucket e libera leitura pública dos arquivos (o acesso é pelo endereço, que é aleatório).
+  storage-init:
+    image: minio/mc:latest
+    depends_on:
+      storage:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://storage:9000 noel noel-storage &&
+      mc mb --ignore-existing local/oficina-do-noel &&
+      mc anonymous set download local/oficina-do-noel
+      "
+
 volumes:
   db_data:
+  storage_data:
